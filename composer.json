@@ -1,0 +1,12 @@
+{
+    "name": "kick-in/hungarian",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sven Mol",
+            "email": "sven@kick-in.nl"
+        }
+    ],
+    "require": {}
+}
