@@ -117,4 +117,40 @@ class MatrixTest extends TestCase
 			);
 		}
 	}
+
+	public function testGetCol()
+	{
+		$this->matrix->set(0, 0, 1);
+		$this->matrix->set(0, 1, 2);
+		$this->matrix->set(1, 0, 3);
+		$this->matrix->set(1, 1, 4);
+
+		self::assertEquals([1, 3], $this->matrix->getRow(0));
+		self::assertEquals([2, 4], $this->matrix->getRow(1));
+
+		TestUtil::assertThrows(function () {
+			$this->matrix->getRow(-1);
+		});
+		TestUtil::assertThrows(function () {
+			$this->matrix->getRow(2);
+		});
+	}
+
+	public function testGetRow()
+	{
+		$this->matrix->set(0, 0, 1);
+		$this->matrix->set(0, 1, 2);
+		$this->matrix->set(1, 0, 3);
+		$this->matrix->set(1, 1, 4);
+
+		self::assertEquals([1, 2], $this->matrix->getCol(0));
+		self::assertEquals([3, 4], $this->matrix->getCol(1));
+
+		TestUtil::assertThrows(function () {
+			$this->matrix->getCol(-1);
+		});
+		TestUtil::assertThrows(function () {
+			$this->matrix->getCol(2);
+		});
+	}
 }

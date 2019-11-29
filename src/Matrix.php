@@ -67,6 +67,14 @@ class Matrix
 		$this->matrix[$col][$row] = $value;
 	}
 
+	public function getRow(int $row)
+	{
+		Assertions::assertInBounds(0, $this->size, $row, "Expected row to be in range");
+		return array_map(function ($col) use ($row) {
+			return $col[$row];
+		}, $this->matrix);
+	}
+
 	public function setRow(int $row, array $values)
 	{
 		Assertions::assertLength($this->size, $values);
@@ -75,6 +83,12 @@ class Matrix
 			Assertions::assertThat('is_int', $value, "Expected value at index $col to be an integer");
 			$this->set($col, $row, $value);
 		}
+	}
+
+	public function getCol(int $col)
+	{
+		Assertions::assertInBounds(0, $this->size, $col, "Expected column to be in range");
+		return $this->matrix[$col];
 	}
 
 	public function setCol(int $col, array $values)
