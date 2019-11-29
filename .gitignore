@@ -1,5 +1,8 @@
 # PHP
 vendor/
 
+# Composer
+composer.lock
+
 # PHPUnit
 .phpunit.result.cache
