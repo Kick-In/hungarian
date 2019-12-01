@@ -104,6 +104,22 @@ class AssignmentSet
 	}
 
 	/**
+	 * Returns the cost of assignment for a given matrix using this assignment result
+	 * @param Matrix $matrix
+	 * @return int
+	 */
+	public function getCost(Matrix $matrix): int
+	{
+		$cost = 0;
+
+		foreach ($this->fwdLookup as $col => $row) {
+			$cost += $matrix->get($col, $row);
+		}
+
+		return $cost;
+	}
+
+	/**
 	 * Removes a forward-reverse pair, note that it does not check if $fwd and $rev are associated
 	 * @param int $fwd
 	 * @param int $rev
