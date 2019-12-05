@@ -153,4 +153,14 @@ class MatrixTest extends TestCase
 			$this->matrix->getCol(2);
 		});
 	}
+
+	public function testClonability()
+	{
+		$this->matrix->setRow(0, [1, 2]);
+		$this->matrix->setRow(1, [3, 4]);
+		$copy = clone $this->matrix;
+		$copy->set(0, 0, 5);
+		$this->assertEquals(1, $this->matrix->get(0, 0));
+		$this->assertEquals(5, $copy->get(0, 0));
+	}
 }

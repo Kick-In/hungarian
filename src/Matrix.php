@@ -19,7 +19,7 @@ class Matrix
 
 	/**
 	 * $matrix[$col][$row]
-	 * @var array
+	 * @var int[][]
 	 */
 	private $matrix;
 
