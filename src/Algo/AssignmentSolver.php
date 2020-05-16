@@ -16,13 +16,12 @@ abstract class AssignmentSolver
 		$matrix = clone $matrix;
 		$result = $this->solveMin($matrix);
 		if ($matrix instanceof LabeledMatrix) {
-			return $result->applyLabels(
+			$result->applyLabels(
 				$matrix->getRowLabels(),
 				$matrix->getColLabels()
 			);
-		}else {
-			return $result;
 		}
+		return $result;
 	}
 
 	protected function rowReduce(Matrix $matrix): array
