@@ -4,7 +4,7 @@ namespace Kickin\Hungarian\Tests;
 
 
 use Exception;
-use Kickin\Hungarian\Matrix;
+use Kickin\Hungarian\Matrix\Matrix;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
 
@@ -17,12 +17,21 @@ class MatrixTest extends TestCase
 		$this->matrix = new Matrix(2);
 	}
 
+	public function testInitialValues()
+	{
+		for ($i = 0; $i < $this->matrix->getSize(); $i++) {
+			for ($j = 0; $j < $this->matrix->getSize(); $j++) {
+				$this->assertEquals(PHP_INT_MAX, $this->matrix->get($i, $j), "Expected matrix to be initialized with zeros");
+			}
+		}
+	}
+
 	public function testConstructZeroSized()
 	{
 		TestUtil::assertThrows(function () {
 			new Matrix(0);
 		}, function (Exception $exception) {
-			$this->assertStringContainsString('0', $exception->getMessage());
+			$this->assertStringContainsString('non-positive', $exception->getMessage());
 		});
 	}
 
@@ -94,70 +103,12 @@ class MatrixTest extends TestCase
 		});
 	}
 
-	public function testSetRow()
-	{
-		$row = [0, 1];
-		$this->matrix->setRow(1, $row);
-		for ($i = 0; $i < $this->matrix->getSize(); $i++) {
-			$this->assertEquals(
-				$row[$i],
-				$this->matrix->get($i, 1)
-			);
-		}
-	}
-
-	public function testSetCol()
-	{
-		$col = [0, 1];
-		$this->matrix->setCol(1, $col);
-		for ($i = 0; $i < $this->matrix->getSize(); $i++) {
-			$this->assertEquals(
-				$col[$i],
-				$this->matrix->get(1, $i)
-			);
-		}
-	}
-
-	public function testGetCol()
-	{
-		$this->matrix->set(0, 0, 1);
-		$this->matrix->set(0, 1, 2);
-		$this->matrix->set(1, 0, 3);
-		$this->matrix->set(1, 1, 4);
-
-		self::assertEquals([1, 3], $this->matrix->getRow(0));
-		self::assertEquals([2, 4], $this->matrix->getRow(1));
-
-		TestUtil::assertThrows(function () {
-			$this->matrix->getRow(-1);
-		});
-		TestUtil::assertThrows(function () {
-			$this->matrix->getRow(2);
-		});
-	}
-
-	public function testGetRow()
-	{
-		$this->matrix->set(0, 0, 1);
-		$this->matrix->set(0, 1, 2);
-		$this->matrix->set(1, 0, 3);
-		$this->matrix->set(1, 1, 4);
-
-		self::assertEquals([1, 2], $this->matrix->getCol(0));
-		self::assertEquals([3, 4], $this->matrix->getCol(1));
-
-		TestUtil::assertThrows(function () {
-			$this->matrix->getCol(-1);
-		});
-		TestUtil::assertThrows(function () {
-			$this->matrix->getCol(2);
-		});
-	}
-
 	public function testClonability()
 	{
-		$this->matrix->setRow(0, [1, 2]);
-		$this->matrix->setRow(1, [3, 4]);
+		$this->matrix->set(0, 0, 1);
+		$this->matrix->set(0, 1, 2);
+		$this->matrix->set(1, 0, 3);
+		$this->matrix->set(1, 1, 4);
 		$copy = clone $this->matrix;
 		$copy->set(0, 0, 5);
 		$this->assertEquals(1, $this->matrix->get(0, 0));
