@@ -4,11 +4,12 @@ namespace Kickin\Hungarian\Result;
 
 
 use Exception;
+use Iterator;
 use Kickin\Hungarian\Matrix\Matrix;
 use Kickin\Hungarian\Util\Assertions;
 use SplFixedArray;
 
-class ResultSet
+class ResultSet implements Iterator
 {
 	/** @var SplFixedArray */
 	private $rowAssignments;
@@ -143,6 +144,12 @@ class ResultSet
 		$this->colAssignments = new SplFixedArray($size);
 	}
 
+	/**
+	 * Converts the labels from numeric indices to labeled ones
+	 * @param array $rowLabels
+	 * @param array $colLabels
+	 * @throws Exception when the result set already has labels
+	 */
 	public function applyLabels(array $rowLabels, array $colLabels): void
 	{
 		if ($this->labeled) {
@@ -165,6 +172,10 @@ class ResultSet
 		}
 	}
 
+	/**
+	 * Returns the size of the result set
+	 * @return int
+	 */
 	public function getSize(): int
 	{
 		return $this->rowAssignments->getSize();
@@ -192,5 +203,41 @@ class ResultSet
 			$this->colAssignments->next();
 		}
 		return $cost;
+	}
+
+	/*
+	 * The functions below implement the Iterator interface
+	 */
+	public function rewind(): void
+	{
+		$this->rowAssignments->rewind();
+		$this->colAssignments->rewind();
+	}
+
+	public function next(): void
+	{
+		$this->rowAssignments->next();
+		$this->colAssignments->next();
+	}
+
+	public function key()
+	{
+		return null;
+	}
+
+	public function current(): array
+	{
+		return [
+			$this->rowAssignments->current(),
+			$this->colAssignments->current()
+		];
+	}
+
+	public function valid(): bool
+	{
+		return (
+			$this->rowAssignments->valid() &&
+			$this->colAssignments->valid()
+		);
 	}
 }
