@@ -159,15 +159,15 @@ class ResultSet implements Iterator
 
 		$this->rowAssignments->rewind();
 		while ($this->rowAssignments->valid()) {
-			$idx = $this->rowAssignments->key();
-			$this->rowAssignments[$idx] = $rowLabels[$idx];
+			$newLabel = $rowLabels[$this->rowAssignments->current()];
+			$this->rowAssignments[$this->rowAssignments->key()] = $newLabel;
 			$this->rowAssignments->next();
 		}
 
 		$this->colAssignments->rewind();
 		while ($this->colAssignments->valid()) {
-			$idx = $this->colAssignments->key();
-			$this->colAssignments[$idx] = $colLabels[$idx];
+			$newLabel = $colLabels[$this->colAssignments->current()];
+			$this->colAssignments[$this->colAssignments->key()] = $newLabel;
 			$this->colAssignments->next();
 		}
 	}
