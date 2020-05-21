@@ -178,4 +178,24 @@ class ResultSetTest extends TestCase
 
 		self::assertEquals(60, $set->getCost($matrix));
 	}
+
+	public function testMerge()
+	{
+		$set1 = new ResultSet(2);
+		$set1->set("a", "b");
+		$set1->set("b", "c");
+		$set2 = new ResultSet(3);
+		$set2->set("c", "d");
+		$set2->set("d", "e");
+		$set2->set("e", "f");
+
+		$result = ResultSet::merge($set1, $set2);
+		
+		self::assertEquals(5, $result->getSize());
+		self::assertEquals("b", $result->getRow("a"));
+		self::assertEquals("c", $result->getRow("b"));
+		self::assertEquals("d", $result->getRow("c"));
+		self::assertEquals("e", $result->getRow("d"));
+		self::assertEquals("f", $result->getRow("e"));
+	}
 }

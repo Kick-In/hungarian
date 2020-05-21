@@ -11,6 +11,18 @@ use SplFixedArray;
 
 class ResultSet implements Iterator
 {
+	public static function merge(ResultSet $r1, ResultSet $r2): ResultSet
+	{
+		$result = new ResultSet($r1->getSize() + $r2->getSize());
+		foreach ($r1 as list($row, $col)) {
+			$result->set($row, $col);
+		}
+		foreach ($r2 as list($row, $col)) {
+			$result->set($row, $col);
+		}
+		return $result;
+	}
+
 	/** @var SplFixedArray */
 	private $rowAssignments;
 	/** @var SplFixedArray */
