@@ -53,7 +53,7 @@ class LabeledMatrix extends Matrix
 		$result = array_fill(0, $this->getSize(), null);
 		$labels->rewind();
 		while ($labels->valid()) {
-			$result[$labels->key()] = $labels->current();
+			$result[$labels->getInfo()] = $labels->current();
 			$labels->next();
 		}
 		return $result;
