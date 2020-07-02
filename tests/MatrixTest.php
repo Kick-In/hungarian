@@ -21,7 +21,7 @@ class MatrixTest extends TestCase
 	{
 		for ($i = 0; $i < $this->matrix->getSize(); $i++) {
 			for ($j = 0; $j < $this->matrix->getSize(); $j++) {
-				$this->assertEquals(PHP_INT_MAX, $this->matrix->get($i, $j), "Expected matrix to be initialized with zeros");
+				$this->assertEquals(1e12, $this->matrix->get($i, $j), "Expected matrix to be initialized to 1e12");
 			}
 		}
 	}

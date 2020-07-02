@@ -31,7 +31,7 @@ class Matrix
 		for ($i = 0; $i < $size; $i++) {
 			$this->data[$i] = new SplFixedArray($size);
 			for ($j = 0; $j < $size; $j++) {
-				$this->data[$i][$j] = PHP_INT_MAX;
+				$this->data[$i][$j] = 1e12;
 			}
 		}
 	}
