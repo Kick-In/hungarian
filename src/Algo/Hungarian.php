@@ -8,6 +8,9 @@ use Kickin\Hungarian\Result\ResultSet;
 
 class Hungarian extends AssignmentSolver
 {
+	/** @var int[][] */
+	private $rowCache;
+
 	private function getPrimeFromRow($row, $primed)
 	{
 		if (!array_key_exists($row, $primed)) {
@@ -44,6 +47,7 @@ class Hungarian extends AssignmentSolver
 
 	protected function solveMin(Matrix $matrix): ?ResultSet
 	{
+		$this->rowCache = [];
 		$this->colReduce($matrix);
 		$rri = $this->rowReduce($matrix);
 
@@ -187,6 +191,7 @@ class Hungarian extends AssignmentSolver
 				foreach ($cells as $column => $cell) {
 					$value = $matrix->get($row, $column);
 					$matrix->set($row, $column, $value - $min);
+					unset($this->rowCache[$row]);
 				}
 			}
 
@@ -194,6 +199,7 @@ class Hungarian extends AssignmentSolver
 				foreach ($cells as $column => $cell) {
 					$value = $matrix->get($row, $column);
 					$matrix->set($row, $column, $value + $min);
+					unset($this->rowCache[$row]);
 				}
 			}
 
@@ -203,10 +209,15 @@ class Hungarian extends AssignmentSolver
 
 	private function getRow($matrix, $row)
 	{
-		$values = [];
-		for ($i = 0; $i < $matrix->getSize(); $i++) {
-			$values[$i] = $matrix->get($row, $i);
+		if (array_key_exists($row, $this->rowCache)) {
+			return $this->rowCache[$row];
+		} else {
+			$values = [];
+			for ($i = 0; $i < $matrix->getSize(); $i++) {
+				$values[$i] = $matrix->get($row, $i);
+			}
+			$this->rowCache[$row] = $values;
+			return $values;
 		}
-		return $values;
 	}
 }
