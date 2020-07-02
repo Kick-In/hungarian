@@ -13,6 +13,8 @@ class Matrix
 {
 	/** @var SplFixedArray */
 	private $data;
+	/** @var int */
+	private $size;
 
 	/**
 	 * Creates a square matrix of positive or zero values.
@@ -24,6 +26,8 @@ class Matrix
 	{
 		Assertions::assertLargerEqual(1, $size, "Cannot create a matrix with non-positive size");
 		$this->data = new SplFixedArray($size);
+		$this->size = $size;
+
 		for ($i = 0; $i < $size; $i++) {
 			$this->data[$i] = new SplFixedArray($size);
 			for ($j = 0; $j < $size; $j++) {
@@ -39,7 +43,7 @@ class Matrix
 	 */
 	public function getSize()
 	{
-		return $this->data->getSize();
+		return $this->size;
 	}
 
 	/**
