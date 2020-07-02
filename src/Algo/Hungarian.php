@@ -29,15 +29,17 @@ class Hungarian extends AssignmentSolver
 		return $starred[$row];
 	}
 
-	private function getNonCoveredZeroMatrix(Matrix $matrix, $coveredRow, $coveredColumn)
+	private function getFirstUncoveredZero(Matrix $matrix, $coveredRow, $coveredColumn)
 	{
 		$non_covered_zero_matrix = [];
 		for ($row = 0; $row < $matrix->getSize(); $row++) {
+			if (in_array($row, $coveredRow, true)) continue;
+
 			$cells = $this->getRow($matrix, $row);
 			$zeroCells = array_keys($cells, 0, true);
 			foreach ($zeroCells as $column) {
-				if (!in_array($row, $coveredRow, true) && !in_array($column, $coveredColumn, true)) {
-					$non_covered_zero_matrix[$row][] = $column;
+				if (!in_array($column, $coveredColumn, true)) {
+					return [$row, $column];
 				}
 			}
 		}
@@ -60,8 +62,8 @@ class Hungarian extends AssignmentSolver
 			/*
 			 * Generate zero matrix
 			 */
-			$non_covered_zero_matrix = $this->getNonCoveredZeroMatrix($matrix, $coveredRow, $coveredColumn);
-			while ($non_covered_zero_matrix) {
+			$uncoveredZero = $this->getFirstUncoveredZero($matrix, $coveredRow, $coveredColumn);
+			while ($uncoveredZero) {
 
 				/*
 				 * Step 1:
@@ -72,8 +74,7 @@ class Hungarian extends AssignmentSolver
 				 *     Else
 				 *     - Step 2
 				 */
-				$row = key($non_covered_zero_matrix);
-				$column = $non_covered_zero_matrix[$row][0];
+				[$row, $column] = $uncoveredZero;
 				$cprimed[$row] = $column;
 				if (array_key_exists($row, $cstarred)) {
 
@@ -149,7 +150,7 @@ class Hungarian extends AssignmentSolver
 					}
 				}
 
-				$non_covered_zero_matrix = $this->getNonCoveredZeroMatrix($matrix, $coveredRow, $coveredColumn);
+				$uncoveredZero = $this->getFirstUncoveredZero($matrix, $coveredRow, $coveredColumn);
 			}
 
 			/*
