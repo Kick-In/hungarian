@@ -31,7 +31,6 @@ class Hungarian extends AssignmentSolver
 
 	private function getFirstUncoveredZero(Matrix $matrix, $coveredRow, $coveredColumn)
 	{
-		$non_covered_zero_matrix = [];
 		for ($row = 0; $row < $matrix->getSize(); $row++) {
 			if (in_array($row, $coveredRow, true)) continue;
 
@@ -43,8 +42,7 @@ class Hungarian extends AssignmentSolver
 				}
 			}
 		}
-
-		return $non_covered_zero_matrix;
+		return null;
 	}
 
 	protected function solveMin(Matrix $matrix): ?ResultSet
