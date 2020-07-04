@@ -116,8 +116,8 @@ class LabeledMatrix extends Matrix
 		//Shuffle the actual matrix
 		for ($i = 0; $i < $this->getSize(); $i++) {
 			for ($j = 0; $j < $this->getSize(); $j++) {
-				$value = $copy->get($rows[$i], $cols[$j]);
-				$this->set($i, $j, $value);
+				$value = $copy->get($i, $j);
+				$this->set($rows[$i], $cols[$j], $value);
 			}
 		}
 
