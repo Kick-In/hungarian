@@ -32,4 +32,17 @@ class StringMatrix extends LabeledMatrix
 		}
 		return parent::resolve($key, $labels);
 	}
+
+	protected function getLabels(SplObjectStorage $labels)
+	{
+		$array = parent::getLabels($labels);
+
+		return array_map(function ($label) {
+			if ($label instanceof StringContainer) {
+				return $label->get();
+			} else {
+				return $label;
+			}
+		}, $array);
+	}
 }
