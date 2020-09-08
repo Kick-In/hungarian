@@ -31,6 +31,11 @@ class StringContainer
 		StringContainer::$lookup[$value] = $this;
 	}
 
+	public function get()
+	{
+		return $this->value;
+	}
+
 	public function __toString()
 	{
 		return $this->value;

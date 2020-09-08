@@ -48,7 +48,7 @@ class LabeledMatrix extends Matrix
 		return $this->getLabels($this->colLabels);
 	}
 
-	private function getLabels(SplObjectStorage $labels)
+	protected function getLabels(SplObjectStorage $labels)
 	{
 		$result = array_fill(0, $this->getSize(), null);
 		$labels->rewind();
