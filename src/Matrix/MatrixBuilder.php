@@ -74,11 +74,24 @@ class MatrixBuilder
 		Assertions::assertLargerEqual(1, count($this->colSource), "Expected at least one column to be provided");
 		Assertions::assertNotNull($this->mapper, "Expected a mapping function to be provided");
 
-		$size = max(count($this->rowSource), count($this->colSource));
+		if (is_string($this->rowSource[0])) {
+			// Assert all data is string-based, mixed type labels are not allowed
+			Assertions::assertAll($this->rowSource, 'is_string', "Expected all row labels to be strings");
+			Assertions::assertAll($this->colSource, 'is_string', "Expected all column labels to be strings");
+			// Instantiate the matrix as a string matrix, this will automatically convert the strings to StringContainers
+			$type = StringMatrix::class;
+		} else {
+			// Assert all items are objects, mixed types are still not allowed
+			Assertions::assertAll($this->rowSource, 'is_object', "Expected all row labels to be strings");
+			Assertions::assertAll($this->colSource, 'is_object', "Expected all column labels to be strings");
+			$type = LabeledMatrix::class;
+		}
+
+		$size      = max(count($this->rowSource), count($this->colSource));
 		$rowSource = $this->augmentToLength($this->rowSource, $size);
 		$colSource = $this->augmentToLength($this->colSource, $size);
 
-		$matrix = new LabeledMatrix($rowSource, $colSource);
+		$matrix = new $type($rowSource, $colSource);
 		foreach ($rowSource as $row) {
 			foreach ($colSource as $col) {
 				if ($row instanceof MarkerClass || $col instanceof MarkerClass) {

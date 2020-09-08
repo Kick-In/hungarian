@@ -4,6 +4,7 @@ namespace Kickin\Hungarian\Tests;
 
 
 use Kickin\Hungarian\Matrix\MatrixBuilder;
+use Kickin\Hungarian\Matrix\StringMatrix;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -71,5 +72,36 @@ class MatrixBuilderTest extends TestCase
 		$this->assertEquals(6, $matrix->get($o2, $o3));
 		$this->assertEquals(4, $matrix->get($o1, $o4));
 		$this->assertEquals(8, $matrix->get($o2, $o4));
+	}
+
+	public function testYieldsStringMatrix()
+	{
+		$builder = new MatrixBuilder();
+		$builder->setRowSource(['a', 'b'])
+				->setColSource(['c', 'd'])
+				->setMappingFunction(function ($r, $c) {
+					return 1;
+				});
+
+		$matrix = $builder->build();
+
+		$this->assertInstanceOf(StringMatrix::class, $matrix);
+		$this->assertEquals(['a', 'b'], $matrix->getRowLabels());
+		$this->assertEquals(['c', 'd'], $matrix->getColLabels());
+	}
+
+	public function testSettingStringMatrix()
+	{
+		$builder = new MatrixBuilder();
+		$builder->setRowSource(['a', 'b'])
+				->setColSource(['c', 'd'])
+				->setMappingFunction(function ($r, $c) {
+					return 1;
+				});
+
+		$matrix = $builder->build();
+
+		$matrix->set('a', 'c', 3);
+		$this->assertEquals(3, $matrix->get('a', 'c'));
 	}
 }

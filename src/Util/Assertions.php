@@ -80,4 +80,17 @@ class Assertions
 			throw new Exception($message);
 		}
 	}
+
+	static function assertAll(iterable $data, callable $check, string $message = NULL)
+	{
+		foreach ($data as $idx => $item) {
+			if (!$check($item)) {
+				if ($message === NULL) {
+					$message = "Expected all items to pass, but item at index $idx failed";
+				}
+
+				throw new Exception($message);
+			}
+		}
+	}
 }
