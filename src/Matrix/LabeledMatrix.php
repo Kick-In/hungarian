@@ -21,7 +21,7 @@ class LabeledMatrix extends Matrix
 	 * @param object[] $colLabels
 	 * @throws Exception when either $rowLabels or $colLabels is empty
 	 */
-	public function __construct($rowLabels, $colLabels)
+	public function __construct(array $rowLabels, array $colLabels)
 	{
 		Assertions::assertLargerEqual(1, count($rowLabels), "Expected at least 1 row");
 		Assertions::assertLargerEqual(1, count($colLabels), "Expected at least 1 column");
@@ -29,26 +29,26 @@ class LabeledMatrix extends Matrix
 		parent::__construct($size);
 
 		$this->rowLabels = new SplObjectStorage();
-		for ($i = 0; $i < count($rowLabels); $i++) {
-			$this->rowLabels[$rowLabels[$i]] = $i;
+		foreach ($rowLabels as $i => $label) {
+			$this->rowLabels[$label] = $i;
 		}
 		$this->colLabels = new SplObjectStorage();
-		for ($i = 0; $i < count($colLabels); $i++) {
-			$this->colLabels[$colLabels[$i]] = $i;
+		foreach ($colLabels as $i => $label) {
+			$this->colLabels[$label] = $i;
 		}
 	}
 
-	public function getRowLabels()
+	public function getRowLabels(): array
 	{
 		return $this->getLabels($this->rowLabels);
 	}
 
-	public function getColLabels()
+	public function getColLabels(): array
 	{
 		return $this->getLabels($this->colLabels);
 	}
 
-	protected function getLabels(SplObjectStorage $labels)
+	protected function getLabels(SplObjectStorage $labels): array
 	{
 		$result = array_fill(0, $this->getSize(), null);
 		$labels->rewind();
@@ -97,14 +97,14 @@ class LabeledMatrix extends Matrix
 	{
 		if (is_int($key)) {
 			return $key;
-		} else if (isset($labels[$key])) {
+		} elseif (isset($labels[$key])) {
 			return $labels[$key];
 		} else {
 			throw new Exception(sprintf("Cannot find label '%s'", $key));
 		}
 	}
 
-	public function shuffle()
+	public function shuffle(): void
 	{
 		//Prepare parameters
 		$copy = clone $this;
