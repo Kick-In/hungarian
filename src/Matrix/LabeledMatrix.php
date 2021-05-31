@@ -5,6 +5,7 @@ namespace Kickin\Hungarian\Matrix;
 
 use Exception;
 use Kickin\Hungarian\Util\Assertions;
+use Kickin\Hungarian\Util\Marker;
 use SplObjectStorage;
 
 class LabeledMatrix extends Matrix
@@ -46,6 +47,16 @@ class LabeledMatrix extends Matrix
 	public function getColLabels()
 	{
 		return $this->getLabels($this->colLabels);
+	}
+
+	public static function getMarker()
+	{
+		return new Marker();
+	}
+
+	public static function isMarker($value): bool
+	{
+		return $value instanceof Marker;
 	}
 
 	protected function getLabels(SplObjectStorage $labels)

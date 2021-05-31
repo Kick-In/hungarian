@@ -4,7 +4,6 @@ namespace Kickin\Hungarian\Matrix;
 
 
 use Kickin\Hungarian\Util\Assertions;
-use Kickin\Hungarian\Util\MarkerClass;
 
 /**
  * Helper class to build a labeled matrix.
@@ -82,19 +81,19 @@ class MatrixBuilder
 			$type = StringMatrix::class;
 		} else {
 			// Assert all items are objects, mixed types are still not allowed
-			Assertions::assertAll($this->rowSource, 'is_object', "Expected all row labels to be strings");
-			Assertions::assertAll($this->colSource, 'is_object', "Expected all column labels to be strings");
+			Assertions::assertAll($this->rowSource, 'is_object', "Expected all row labels to be objects");
+			Assertions::assertAll($this->colSource, 'is_object', "Expected all column labels to be objects");
 			$type = LabeledMatrix::class;
 		}
 
 		$size      = max(count($this->rowSource), count($this->colSource));
-		$rowSource = $this->augmentToLength($this->rowSource, $size);
-		$colSource = $this->augmentToLength($this->colSource, $size);
+		$rowSource = $this->augmentToLength($this->rowSource, $size, $type);
+		$colSource = $this->augmentToLength($this->colSource, $size, $type);
 
 		$matrix = new $type($rowSource, $colSource);
 		foreach ($rowSource as $row) {
 			foreach ($colSource as $col) {
-				if ($row instanceof MarkerClass || $col instanceof MarkerClass) {
+				if ($type::isMarker($row) || $type::isMarker($col)) {
 					$value = $this->augment;
 				} else {
 					$value = ($this->mapper)($row, $col);
@@ -109,10 +108,10 @@ class MatrixBuilder
 		return $matrix;
 	}
 
-	private function augmentToLength(array $array, int $length): array
+	private function augmentToLength(array $array, int $length, string $matrixClass): array
 	{
 		while (count($array) < $length) {
-			$array[] = new MarkerClass();
+			$array[] = $matrixClass::getMarker();
 		}
 		return $array;
 	}
