@@ -10,7 +10,7 @@ use SplObjectStorage;
 class StringMatrix extends LabeledMatrix
 {
 	private static $markerPrefix;
-	private static $markerCounter;
+	private static $markerCounter = 0;
 
 	/**
 	 * The StringMatrix behaves identical to a labeled matrix except that it allows only strings for keys
