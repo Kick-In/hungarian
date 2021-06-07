@@ -15,7 +15,7 @@ class StringMatrix extends LabeledMatrix
 	 * @param string[] $colLabels
 	 * @throws Exception when either $rowLabels or $colLabels is empty
 	 */
-	public function __construct($rowLabels, $colLabels)
+	public function __construct(array $rowLabels, array $colLabels)
 	{
 		$rowLabels = array_map([StringContainer::class, 'forValue'], $rowLabels);
 		$colLabels = array_map([StringContainer::class, 'forValue'], $colLabels);
@@ -33,16 +33,14 @@ class StringMatrix extends LabeledMatrix
 		return parent::resolve($key, $labels);
 	}
 
-	protected function getLabels(SplObjectStorage $labels)
+	protected function getLabels(SplObjectStorage $labels): array
 	{
 		$array = parent::getLabels($labels);
 
-		return array_map(function ($label) {
-			if ($label instanceof StringContainer) {
-				return $label->get();
-			} else {
-				return $label;
-			}
+		return array_map(static function ($label) {
+			return ($label instanceof StringContainer)
+				? $label->get()
+				: $label;
 		}, $array);
 	}
 }

@@ -23,7 +23,7 @@ class MatrixBuilderTest extends TestCase
 		});
 	}
 
-	public function testDefault()
+	public function testDefault(): void
 	{
 		$this->builder->setDefaultValue(5);
 		$matrix = $this->builder->build();
@@ -34,7 +34,7 @@ class MatrixBuilderTest extends TestCase
 		}
 	}
 
-	public function testAugment()
+	public function testAugment(): void
 	{
 		$this->builder->setRowSource([new stdClass(), new stdClass(), new stdClass(), new stdClass()]);
 		$this->builder->setAugmentValue(3);
@@ -50,7 +50,7 @@ class MatrixBuilderTest extends TestCase
 		}
 	}
 
-	public function testMapping()
+	public function testMapping(): void
 	{
 		$o1 = new stdClass();
 		$o1->value = 1;
@@ -74,7 +74,7 @@ class MatrixBuilderTest extends TestCase
 		$this->assertEquals(8, $matrix->get($o2, $o4));
 	}
 
-	public function testYieldsStringMatrix()
+	public function testYieldsStringMatrix(): void
 	{
 		$builder = new MatrixBuilder();
 		$builder->setRowSource(['a', 'b'])
@@ -90,7 +90,7 @@ class MatrixBuilderTest extends TestCase
 		$this->assertEquals(['c', 'd'], $matrix->getColLabels());
 	}
 
-	public function testSettingStringMatrix()
+	public function testSettingStringMatrix(): void
 	{
 		$builder = new MatrixBuilder();
 		$builder->setRowSource(['a', 'b'])
