@@ -97,7 +97,7 @@ class Assertions
 	/**
 	 * Asserts an array is sequential, or not associative.
 	 * Acceptable arrays either have no explicitly defined keys, or only use sequential indices,
-	 * like ['a', 'b', 'c'] or [0 => 'a', 2 => 'c', 1 => 'b']
+	 * like ['a', 'b', 'c'] or [0 => 'a', 1 => 'b', 2 => 'c']
 	 *
 	 * @param array       $array
 	 * @param string|null $message
