@@ -93,4 +93,25 @@ class Assertions
 			}
 		}
 	}
+
+	/**
+	 * Asserts an array is sequential, or not associative.
+	 * Acceptable arrays either have no explicitly defined keys, or only use sequential indices,
+	 * like ['a', 'b', 'c'] or [0 => 'a', 2 => 'c', 1 => 'b']
+	 *
+	 * @param array       $array
+	 * @param string|null $message
+	 *
+	 * @throws Exception
+	 */
+	static function assertArraySequential(array $array, string $message = NULL)
+	{
+		if ($array !== [] && array_keys($array) !== range(0, count($array) - 1)) {
+			if ($message === NULL) {
+				$message = 'Expected a sequential array, but got an associative array';
+			}
+
+			throw new Exception($message);
+		}
+	}
 }

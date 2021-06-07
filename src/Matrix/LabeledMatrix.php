@@ -25,6 +25,8 @@ class LabeledMatrix extends Matrix
 	{
 		Assertions::assertLargerEqual(1, count($rowLabels), "Expected at least 1 row");
 		Assertions::assertLargerEqual(1, count($colLabels), "Expected at least 1 column");
+		Assertions::assertArraySequential($rowLabels, 'Expected row labels to be sequential');
+		Assertions::assertArraySequential($colLabels, 'Expected column labels to be sequential');
 		$size = max(count($rowLabels), count($colLabels));
 		parent::__construct($size);
 
