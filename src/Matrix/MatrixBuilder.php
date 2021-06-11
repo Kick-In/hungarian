@@ -4,7 +4,7 @@ namespace Kickin\Hungarian\Matrix;
 
 
 use Kickin\Hungarian\Util\Assertions;
-use Kickin\Hungarian\Util\MarkerClass;
+use Kickin\Hungarian\Util\Marker;
 
 /**
  * Helper class to build a labeled matrix.
@@ -94,7 +94,7 @@ class MatrixBuilder
 		$matrix = new $type($rowSource, $colSource);
 		foreach ($rowSource as $row) {
 			foreach ($colSource as $col) {
-				if ($row instanceof MarkerClass || $col instanceof MarkerClass) {
+				if ($row instanceof Marker || $col instanceof Marker) {
 					$value = $this->augment;
 				} else {
 					$value = ($this->mapper)($row, $col);
@@ -112,7 +112,7 @@ class MatrixBuilder
 	private function augmentToLength(array $array, int $length): array
 	{
 		while (count($array) < $length) {
-			$array[] = new MarkerClass();
+			$array[] = new Marker();
 		}
 		return $array;
 	}
