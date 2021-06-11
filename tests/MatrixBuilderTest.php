@@ -34,7 +34,27 @@ class MatrixBuilderTest extends TestCase
 		}
 	}
 
-	public function testAugment(): void
+	/**
+	 * @author gronostajo (https://github.com/gronostajo)
+	 */
+	public function testAugmentString()
+	{
+		$this->builder->setRowSource(['A', 'B', 'C', 'D']);
+		$this->builder->setColSource(['a', 'b']);
+		$this->builder->setAugmentValue(3);
+		$matrix = $this->builder->build();
+		for ($i = 0; $i < $matrix->getSize(); $i++) {
+			for ($j = 0; $j < $matrix->getSize(); $j++) {
+				if ($j < 2) {
+					$this->assertEquals(PHP_INT_MAX, $matrix->get($i, $j));
+				} else {
+					$this->assertEquals(3, $matrix->get($i, $j));
+				}
+			}
+		}
+	}
+
+	public function testAugmentObject(): void
 	{
 		$this->builder->setRowSource([new stdClass(), new stdClass(), new stdClass(), new stdClass()]);
 		$this->builder->setAugmentValue(3);
