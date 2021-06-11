@@ -7,6 +7,7 @@ use Exception;
 use Iterator;
 use Kickin\Hungarian\Matrix\Matrix;
 use Kickin\Hungarian\Util\Assertions;
+use Kickin\Hungarian\Util\Marker;
 use SplFixedArray;
 
 class ResultSet implements Iterator
@@ -215,6 +216,30 @@ class ResultSet implements Iterator
 			$this->colAssignments->next();
 		}
 		return $cost;
+	}
+
+	/**
+	 * Returns a copy of this ResultSet without any Markers
+	 * @return ResultSet
+	 * @throws Exception
+	 */
+	public function withoutUnassigned(): ResultSet
+	{
+		$rows = [];
+		$cols = [];
+		foreach ($this as [$row, $col]) {
+			if (!$row instanceof Marker && !$col instanceof Marker) {
+				$rows[] = $row;
+				$cols[] = $col;
+			}
+		}
+
+		$set = new ResultSet(count($rows));
+		for ($i = 0; $i < count($rows); $i++) {
+			$set->set($rows[$i], $cols[$i]);
+		}
+
+		return $set;
 	}
 
 	/*
