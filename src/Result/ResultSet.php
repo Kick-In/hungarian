@@ -38,21 +38,17 @@ class ResultSet implements Iterator
 
 	private function findRow($row): void
 	{
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
+		$this->rewind();
 		while ($this->rowAssignments->valid() && $this->rowAssignments->current() !== $row) {
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
+			$this->next();
 		}
 	}
 
 	private function findCol($col): void
 	{
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
+		$this->rewind();
 		while ($this->colAssignments->valid() && $this->colAssignments->current() !== $col) {
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
+			$this->next();
 		}
 	}
 
@@ -64,14 +60,11 @@ class ResultSet implements Iterator
 		if ($this->hasCol($col)) {
 			throw new Exception("Column is already assigned");
 		}
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
-		while ($this->rowAssignments->current() !== null || $this->colAssignments->current() !== null) {
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
+		$this->rewind();
+		while ($this->rowAssignments->current() !== NULL || $this->colAssignments->current() !== NULL) {
+			$this->next();
 			if (
-				!$this->rowAssignments->valid() ||
-				!$this->colAssignments->valid()
+			!$this->valid()
 			) {
 				throw new Exception("Cannot assign a new row or column, result set is exhausted");
 			}
@@ -170,14 +163,12 @@ class ResultSet implements Iterator
 		}
 		$this->labeled = true;
 
-		$this->rowAssignments->rewind();
+		$this->rewind();
 		while ($this->rowAssignments->valid()) {
 			$newLabel = $rowLabels[$this->rowAssignments->current()];
 			$this->rowAssignments[$this->rowAssignments->key()] = $newLabel;
 			$this->rowAssignments->next();
 		}
-
-		$this->colAssignments->rewind();
 		while ($this->colAssignments->valid()) {
 			$newLabel = $colLabels[$this->colAssignments->current()];
 			$this->colAssignments[$this->colAssignments->key()] = $newLabel;
@@ -204,17 +195,13 @@ class ResultSet implements Iterator
 	{
 		Assertions::assertEqual($this->rowAssignments->getSize(), $matrix->getSize(), "Expected a matrix of a size equal to the result set");
 		$cost = 0;
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
-		while ($this->rowAssignments->valid() && $this->colAssignments->valid()) {
-			$row = $this->rowAssignments->current();
-			$col = $this->colAssignments->current();
-			if ($row !== null && $col !== null) {
+
+		foreach ($this as [$row, $col]) {
+			if ($row !== NULL && $col !== NULL) {
 				$cost += $matrix->get($row, $col);
 			}
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
 		}
+
 		return $cost;
 	}
 
