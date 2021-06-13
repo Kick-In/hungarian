@@ -54,12 +54,22 @@ class ResultSet implements Iterator
 
 	public function set($row, $col): void
 	{
-		if ($this->hasRow($row)) {
+		if ($row instanceof Marker || $row === NULL) {
+			$row = NULL;
+		} elseif ($this->hasRow($row)) {
 			throw new Exception("Row is already assigned");
 		}
-		if ($this->hasCol($col)) {
+
+		if ($col instanceof Marker || $col === NULL) {
+			$col = NULL;
+		} elseif ($this->hasCol($col)) {
 			throw new Exception("Column is already assigned");
 		}
+
+		if ($row === NULL && $col === NULL) {
+			throw new Exception("Cannot create an assignment with both row and column being NULL");
+		}
+
 		$this->rewind();
 		while ($this->rowAssignments->current() !== NULL || $this->colAssignments->current() !== NULL) {
 			$this->next();
@@ -215,7 +225,7 @@ class ResultSet implements Iterator
 		$rows = [];
 		$cols = [];
 		foreach ($this as [$row, $col]) {
-			if (!$row instanceof Marker && !$col instanceof Marker) {
+			if ($row !== NULL && $col !== NULL) {
 				$rows[] = $row;
 				$cols[] = $col;
 			}

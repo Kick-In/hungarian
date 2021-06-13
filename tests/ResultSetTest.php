@@ -200,6 +200,29 @@ class ResultSetTest extends TestCase
 		self::assertEquals("f", $result->getRow("e"));
 	}
 
+	public function testMapsNulls()
+	{
+		$set = new ResultSet(2);
+		$set->set('a', new Marker());
+		$set->set(new Marker(), 'b');
+
+		$this->assertNull($set->getRow('a'));
+		$this->assertNull($set->getCol('b'));
+
+		TestUtil::assertThrows(function () {
+			$set = new ResultSet(1);
+			$set->set(new Marker(), new Marker());
+		}, function (Exception $exception) {
+			$this->assertEquals("Cannot create an assignment with both row and column being NULL", $exception->getMessage());
+		});
+		TestUtil::assertThrows(function () {
+			$set = new ResultSet(1);
+			$set->set(NULL, NULL);
+		}, function (Exception $exception) {
+			$this->assertEquals("Cannot create an assignment with both row and column being NULL", $exception->getMessage());
+		});
+	}
+
 	public function testWithoutUnassigned()
 	{
 		$set = new ResultSet(4);
