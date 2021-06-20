@@ -86,3 +86,10 @@ $builder->setMappingFunction(function($row, $col){
 
 $matrix = $builder->build();
 ```
+
+If desired, you can easily remove unassigned rows and columns from the results
+
+```php
+$result = $solver->solve($matrix);
+$assignedOnly = $result->withoutUnassigned();
+```
