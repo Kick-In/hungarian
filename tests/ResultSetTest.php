@@ -6,6 +6,7 @@ namespace Kickin\Hungarian\Tests;
 use Exception;
 use Kickin\Hungarian\Matrix\Matrix;
 use Kickin\Hungarian\Result\ResultSet;
+use Kickin\Hungarian\Util\Marker;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -197,5 +198,50 @@ class ResultSetTest extends TestCase
 		self::assertEquals("d", $result->getRow("c"));
 		self::assertEquals("e", $result->getRow("d"));
 		self::assertEquals("f", $result->getRow("e"));
+	}
+
+	public function testMapsNulls()
+	{
+		$set = new ResultSet(2);
+		$set->set('a', new Marker());
+		$set->set(new Marker(), 'b');
+
+		$this->assertNull($set->getRow('a'));
+		$this->assertNull($set->getCol('b'));
+
+		TestUtil::assertThrows(function () {
+			$set = new ResultSet(1);
+			$set->set(new Marker(), new Marker());
+		}, function (Exception $exception) {
+			$this->assertEquals("Cannot create an assignment with both row and column being NULL", $exception->getMessage());
+		});
+		TestUtil::assertThrows(function () {
+			$set = new ResultSet(1);
+			$set->set(NULL, NULL);
+		}, function (Exception $exception) {
+			$this->assertEquals("Cannot create an assignment with both row and column being NULL", $exception->getMessage());
+		});
+	}
+
+	public function testWithoutUnassigned()
+	{
+		$set = new ResultSet(4);
+		$set->set('a', 'a');
+		$set->set('b', new Marker());
+		$set->set('c', 'c');
+		$set->set(new Marker(), 'd');
+
+		$this->assertEquals(4, $set->getSize());
+		$pruned = $set->withoutUnassigned();
+
+		$this->assertEquals(2, $pruned->getSize());
+		$this->assertEquals('a', $pruned->getCol('a'));
+		$this->assertEquals('c', $pruned->getCol('c'));
+		TestUtil::assertThrows(function () use ($pruned) {
+			$pruned->getCol('b');
+		});
+		TestUtil::assertThrows(function () use ($pruned) {
+			$pruned->getCol('d');
+		});
 	}
 }

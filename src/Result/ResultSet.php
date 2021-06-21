@@ -7,6 +7,7 @@ use Exception;
 use Iterator;
 use Kickin\Hungarian\Matrix\Matrix;
 use Kickin\Hungarian\Util\Assertions;
+use Kickin\Hungarian\Util\Marker;
 use SplFixedArray;
 
 class ResultSet implements Iterator
@@ -37,40 +38,43 @@ class ResultSet implements Iterator
 
 	private function findRow($row): void
 	{
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
+		$this->rewind();
 		while ($this->rowAssignments->valid() && $this->rowAssignments->current() !== $row) {
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
+			$this->next();
 		}
 	}
 
 	private function findCol($col): void
 	{
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
+		$this->rewind();
 		while ($this->colAssignments->valid() && $this->colAssignments->current() !== $col) {
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
+			$this->next();
 		}
 	}
 
 	public function set($row, $col): void
 	{
-		if ($this->hasRow($row)) {
+		if ($row instanceof Marker || $row === NULL) {
+			$row = NULL;
+		} elseif ($this->hasRow($row)) {
 			throw new Exception("Row is already assigned");
 		}
-		if ($this->hasCol($col)) {
+
+		if ($col instanceof Marker || $col === NULL) {
+			$col = NULL;
+		} elseif ($this->hasCol($col)) {
 			throw new Exception("Column is already assigned");
 		}
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
-		while ($this->rowAssignments->current() !== null || $this->colAssignments->current() !== null) {
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
+
+		if ($row === NULL && $col === NULL) {
+			throw new Exception("Cannot create an assignment with both row and column being NULL");
+		}
+
+		$this->rewind();
+		while ($this->rowAssignments->current() !== NULL || $this->colAssignments->current() !== NULL) {
+			$this->next();
 			if (
-				!$this->rowAssignments->valid() ||
-				!$this->colAssignments->valid()
+			!$this->valid()
 			) {
 				throw new Exception("Cannot assign a new row or column, result set is exhausted");
 			}
@@ -169,14 +173,12 @@ class ResultSet implements Iterator
 		}
 		$this->labeled = true;
 
-		$this->rowAssignments->rewind();
+		$this->rewind();
 		while ($this->rowAssignments->valid()) {
 			$newLabel = $rowLabels[$this->rowAssignments->current()];
 			$this->rowAssignments[$this->rowAssignments->key()] = $newLabel;
 			$this->rowAssignments->next();
 		}
-
-		$this->colAssignments->rewind();
 		while ($this->colAssignments->valid()) {
 			$newLabel = $colLabels[$this->colAssignments->current()];
 			$this->colAssignments[$this->colAssignments->key()] = $newLabel;
@@ -203,18 +205,38 @@ class ResultSet implements Iterator
 	{
 		Assertions::assertEqual($this->rowAssignments->getSize(), $matrix->getSize(), "Expected a matrix of a size equal to the result set");
 		$cost = 0;
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
-		while ($this->rowAssignments->valid() && $this->colAssignments->valid()) {
-			$row = $this->rowAssignments->current();
-			$col = $this->colAssignments->current();
-			if ($row !== null && $col !== null) {
+
+		foreach ($this as [$row, $col]) {
+			if ($row !== NULL && $col !== NULL) {
 				$cost += $matrix->get($row, $col);
 			}
-			$this->rowAssignments->next();
-			$this->colAssignments->next();
 		}
+
 		return $cost;
+	}
+
+	/**
+	 * Returns a copy of this ResultSet without any Markers
+	 * @return ResultSet
+	 * @throws Exception
+	 */
+	public function withoutUnassigned(): ResultSet
+	{
+		$rows = [];
+		$cols = [];
+		foreach ($this as [$row, $col]) {
+			if ($row !== NULL && $col !== NULL) {
+				$rows[] = $row;
+				$cols[] = $col;
+			}
+		}
+
+		$set = new ResultSet(count($rows));
+		for ($i = 0; $i < count($rows); $i++) {
+			$set->set($rows[$i], $cols[$i]);
+		}
+
+		return $set;
 	}
 
 	/*
