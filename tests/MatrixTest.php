@@ -103,6 +103,19 @@ class MatrixTest extends TestCase
 		});
 	}
 
+	public function testInvert()
+	{
+		$this->matrix->set(0, 0, 1);
+		$this->matrix->set(0, 1, 0);
+		$this->matrix->set(1, 0, 0);
+		$this->matrix->set(1, 1, 1);
+		$invert = $this->matrix->invert();
+		$this->assertEquals(0, $invert->get(0, 0));
+		$this->assertEquals(1, $invert->get(0, 1));
+		$this->assertEquals(1, $invert->get(1, 0));
+		$this->assertEquals(0, $invert->get(1, 1));
+	}
+
 	public function testClonability()
 	{
 		$this->matrix->set(0, 0, 1);
