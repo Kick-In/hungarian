@@ -24,6 +24,18 @@ abstract class AssignmentSolver
 		return $result;
 	}
 
+	/**
+	 * Finds an assignment with the highest assignment score.
+	 * Returns null if the matrix is deemed unsolvable.
+	 * @param Matrix $matrix
+	 *
+	 * @return ResultSet|null
+	 */
+	public function solveMax(Matrix $matrix): ?ResultSet
+	{
+		return $this->solve($matrix->invert());
+	}
+
 	protected function rowReduce(Matrix $matrix): array
 	{
 		return $this->reduce(
