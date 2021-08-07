@@ -92,9 +92,9 @@ class Matrix
 	{
 		$max = 0;
 
-		for ($r = 0; $r < $this->size; $r++) {
-			for ($c = 0; $c < $this->size; $c++) {
-				$value = $this->get($r, $c);
+		for ($row = 0; $row < $this->size; $row++) {
+			for ($col = 0; $col < $this->size; $col++) {
+				$value = $this->get($row, $col);
 				if ($value > $max) {
 					$max = $value;
 				}
@@ -103,9 +103,10 @@ class Matrix
 
 		$new = $clone ? clone $this : $this;
 
-		for ($r = 0; $r < $this->size; $r++) {
-			for ($c = 0; $c < $this->size; $c++) {
-				$new->set($r, $c, $max - $this->get($r, $c));
+		for ($row = 0; $row < $this->size; $row++) {
+			for ($col = 0; $col < $this->size; $col++) {
+				$value = $this->get($row, $col);
+				$new->set($row, $col, $value === NULL ? NULL : ($max - $value));
 			}
 		}
 
