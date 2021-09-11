@@ -26,8 +26,12 @@ class ResultSet implements Iterator
 
 	/** @var SplFixedArray */
 	private $rowAssignments;
+	/** @var Iterator */
+	private $rowIterator;
 	/** @var SplFixedArray */
 	private $colAssignments;
+	/** @var Iterator */
+	private $colIterator;
 	/** @var bool */
 	private $labeled = false;
 
@@ -39,7 +43,7 @@ class ResultSet implements Iterator
 	private function findRow($row): void
 	{
 		$this->rewind();
-		while ($this->rowAssignments->valid() && $this->rowAssignments->current() !== $row) {
+		while ($this->rowIterator->valid() && $this->rowIterator->current() !== $row) {
 			$this->next();
 		}
 	}
@@ -47,7 +51,7 @@ class ResultSet implements Iterator
 	private function findCol($col): void
 	{
 		$this->rewind();
-		while ($this->colAssignments->valid() && $this->colAssignments->current() !== $col) {
+		while ($this->colIterator->valid() && $this->colIterator->current() !== $col) {
 			$this->next();
 		}
 	}
@@ -71,7 +75,7 @@ class ResultSet implements Iterator
 		}
 
 		$this->rewind();
-		while ($this->rowAssignments->current() !== NULL || $this->colAssignments->current() !== NULL) {
+		while ($this->rowIterator->current() !== NULL || $this->colIterator->current() !== NULL) {
 			$this->next();
 			if (
 			!$this->valid()
@@ -79,7 +83,7 @@ class ResultSet implements Iterator
 				throw new Exception("Cannot assign a new row or column, result set is exhausted");
 			}
 		}
-		$idx = $this->rowAssignments->key();
+		$idx = $this->rowIterator->key();
 		$this->rowAssignments[$idx] = $row;
 		$this->colAssignments[$idx] = $col;
 	}
@@ -136,14 +140,14 @@ class ResultSet implements Iterator
 	{
 		Assertions::assertNotNull($row);
 		$this->findRow($row);
-		return $this->rowAssignments->valid();
+		return $this->rowIterator->valid();
 	}
 
 	public function hasCol($col): bool
 	{
 		Assertions::assertNotNull($col);
 		$this->findCol($col);
-		return $this->colAssignments->valid();
+		return $this->colIterator->valid();
 	}
 
 	/**
@@ -158,6 +162,13 @@ class ResultSet implements Iterator
 		}
 		$this->rowAssignments = new SplFixedArray($size);
 		$this->colAssignments = new SplFixedArray($size);
+
+		$this->rowIterator = method_exists($this->rowAssignments, 'getIterator') ?
+				$this->rowAssignments->getIterator() :
+				$this->rowAssignments;
+		$this->colIterator = method_exists($this->colAssignments, 'getIterator') ?
+				$this->colAssignments->getIterator() :
+				$this->colAssignments;
 	}
 
 	/**
@@ -174,15 +185,15 @@ class ResultSet implements Iterator
 		$this->labeled = true;
 
 		$this->rewind();
-		while ($this->rowAssignments->valid()) {
-			$newLabel = $rowLabels[$this->rowAssignments->current()];
-			$this->rowAssignments[$this->rowAssignments->key()] = $newLabel;
-			$this->rowAssignments->next();
+		while ($this->rowIterator->valid()) {
+			$newLabel = $rowLabels[$this->rowIterator->current()];
+			$this->rowAssignments[$this->rowIterator->key()] = $newLabel;
+			$this->rowIterator->next();
 		}
-		while ($this->colAssignments->valid()) {
-			$newLabel = $colLabels[$this->colAssignments->current()];
-			$this->colAssignments[$this->colAssignments->key()] = $newLabel;
-			$this->colAssignments->next();
+		while ($this->colIterator->valid()) {
+			$newLabel = $colLabels[$this->colIterator->current()];
+			$this->colAssignments[$this->colIterator->key()] = $newLabel;
+			$this->colIterator->next();
 		}
 	}
 
@@ -244,14 +255,14 @@ class ResultSet implements Iterator
 	 */
 	public function rewind(): void
 	{
-		$this->rowAssignments->rewind();
-		$this->colAssignments->rewind();
+		$this->rowIterator->rewind();
+		$this->colIterator->rewind();
 	}
 
 	public function next(): void
 	{
-		$this->rowAssignments->next();
-		$this->colAssignments->next();
+		$this->rowIterator->next();
+		$this->colIterator->next();
 	}
 
 	public function key()
@@ -262,16 +273,16 @@ class ResultSet implements Iterator
 	public function current(): array
 	{
 		return [
-			$this->rowAssignments->current(),
-			$this->colAssignments->current()
+			$this->rowIterator->current(),
+			$this->colIterator->current(),
 		];
 	}
 
 	public function valid(): bool
 	{
 		return (
-			$this->rowAssignments->valid() &&
-			$this->colAssignments->valid()
+			$this->rowIterator->valid() &&
+			$this->colIterator->valid()
 		);
 	}
 }
