@@ -225,7 +225,7 @@ class ResultSet implements Iterator
 		$rows = [];
 		$cols = [];
 		foreach ($this as [$row, $col]) {
-			if ($row !== NULL && $col !== NULL) {
+			if ($row !== NULL && !($row instanceof Marker) && $col !== NULL && !($col instanceof Marker)) {
 				$rows[] = $row;
 				$cols[] = $col;
 			}
