@@ -80,6 +80,39 @@ class Matrix
 		}
 	}
 
+	/**
+	 * Takes all values in the matrix and maps them such that the largest value becomes 0 and vice-versa.
+	 * While similarly named, this is NOT the same as mathematical inversion of a Matrix
+	 *
+	 * @param boolean $clone
+	 *
+	 * @return static
+	 */
+	public function invert($clone = true): self
+	{
+		$max = 0;
+
+		for ($row = 0; $row < $this->size; $row++) {
+			for ($col = 0; $col < $this->size; $col++) {
+				$value = $this->get($row, $col);
+				if ($value > $max) {
+					$max = $value;
+				}
+			}
+		}
+
+		$new = $clone ? clone $this : $this;
+
+		for ($row = 0; $row < $this->size; $row++) {
+			for ($col = 0; $col < $this->size; $col++) {
+				$value = $this->get($row, $col);
+				$new->set($row, $col, $value === NULL ? NULL : ($max - $value));
+			}
+		}
+
+		return $new;
+	}
+
 	public function __clone()
 	{
 		$this->data = clone $this->data;

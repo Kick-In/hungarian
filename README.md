@@ -35,6 +35,12 @@ $solver = new Hungarian();
 $result = $solver->solve($matrix);
 ```
 
+Or, if you'd want to find the highest scoring assignment, you can call use `solveMax()`.
+```php
+$result = $solver->solveMax($matrix);
+```
+Under the hood, this is equivalent to solving the matrix after calling `invert()`.
+
 This result can then be used as a list of tuples.
 ```php
 foreach($result as [$row, $col]){
