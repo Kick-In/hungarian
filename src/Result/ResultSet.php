@@ -285,4 +285,14 @@ class ResultSet implements Iterator
 			$this->colIterator->valid()
 		);
 	}
+
+	public function getRowAssignmentsClone(): SplFixedArray
+	{
+		return clone $this->rowAssignments;
+	}
+
+	public function getColAssignmentsClone(): SplFixedArray
+	{
+		return clone $this->colAssignments;
+	}
 }
