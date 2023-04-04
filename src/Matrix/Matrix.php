@@ -113,6 +113,11 @@ class Matrix
 		return $new;
 	}
 
+	public function getDataClone(): SplFixedArray
+	{
+		return (clone $this)->data;
+	}
+
 	public function __clone()
 	{
 		$this->data = clone $this->data;
